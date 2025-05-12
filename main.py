@@ -3,11 +3,17 @@ Python script to update No-IP Dynamic DNS service with the current public IP add
 """
 import os
 import time
+import logging
 
 import requests
 from dotenv import load_dotenv
 
 load_dotenv()
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+)
 
 NOIP_USERNAME = os.getenv("NOIP_USERNAME")
 NOIP_PASSWORD = os.getenv("NOIP_PASSWORD")
@@ -30,13 +36,15 @@ def update_noip_ddns(ip, hostname, username, password):
 
 def main():
     if not (NOIP_USERNAME and NOIP_PASSWORD and NOIP_HOSTNAME):
+        logging.error("Missing required environment variables.")
         raise ValueError(
             "Please set NOIP_USERNAME, NOIP_PASSWORD, and NOIP_HOSTNAME environment variables."
             )
     while True:
         ip = get_public_ip()
+        logging.info(f"Current public IP: {ip}")
         result = update_noip_ddns(ip, NOIP_HOSTNAME, NOIP_USERNAME, NOIP_PASSWORD)
-        print(f"Update result: {result}")
+        logging.info(f"Update result: {result}")
         time.sleep(300)  # Wait for 5 minutes (300 seconds)
 
 
