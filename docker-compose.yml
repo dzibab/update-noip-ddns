@@ -1,0 +1,7 @@
+services:
+  noip-ddns:
+    build: .
+    container_name: noip-ddns
+    env_file:
+      - .env
+    restart: unless-stopped
